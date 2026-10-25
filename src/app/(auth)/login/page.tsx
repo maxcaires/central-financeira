@@ -1,4 +1,5 @@
 import { SetupNotice } from "@/components/setup-notice";
+import { isLoginErrorKind, LOGIN_ERROR_MESSAGE } from "@/lib/auth-errors";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import { ui } from "@/lib/ui";
 import { login } from "./actions";
@@ -15,7 +16,11 @@ export default async function LoginPage(props: PageProps<"/login">) {
         <p className={`${ui.muted} mt-1`}>Entre para continuar.</p>
       </div>
 
-      {erro && <p className={ui.error}>E-mail ou senha inválidos.</p>}
+      {typeof erro === "string" && (
+        <p className={ui.error}>
+          {isLoginErrorKind(erro) ? LOGIN_ERROR_MESSAGE[erro] : LOGIN_ERROR_MESSAGE.outro}
+        </p>
+      )}
 
       <form action={login} className="flex flex-col gap-4">
         <label className={ui.label}>
