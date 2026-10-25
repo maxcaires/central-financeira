@@ -42,3 +42,27 @@ test("08:00 em São Paulo equivale a 11:00 UTC (sem horário de verão)", () => 
 test("formatDateBR", () => {
   assert.equal(formatDateBR("2026-01-05"), "05/01/2026");
 });
+
+import { addMonths, isValidIsoDate, nextRecurrenceDate } from "../src/lib/dates.ts";
+
+test("addMonths mantém o dia e usa o último dia do mês quando necessário", () => {
+  assert.equal(addMonths("2026-01-15", 1), "2026-02-15");
+  assert.equal(addMonths("2026-01-31", 1), "2026-02-28");
+  assert.equal(addMonths("2028-01-31", 1), "2028-02-29");
+  assert.equal(addMonths("2026-01-31", 2), "2026-03-31"); // calculado da data inicial: não deriva
+  assert.equal(addMonths("2026-11-30", 3), "2027-02-28");
+  assert.equal(addMonths("2026-10-24", 12), "2027-10-24");
+});
+
+test("nextRecurrenceDate", () => {
+  assert.equal(nextRecurrenceDate("2026-10-24", "weekly"), "2026-10-31");
+  assert.equal(nextRecurrenceDate("2026-10-31", "monthly"), "2026-11-30");
+  assert.equal(nextRecurrenceDate("2028-02-29", "yearly"), "2029-02-28");
+});
+
+test("isValidIsoDate", () => {
+  assert.equal(isValidIsoDate("2026-02-28"), true);
+  assert.equal(isValidIsoDate("2026-02-30"), false);
+  assert.equal(isValidIsoDate("26-02-28"), false);
+  assert.equal(isValidIsoDate(""), false);
+});

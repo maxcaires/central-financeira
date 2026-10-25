@@ -19,7 +19,7 @@ BRL e USD ficam sempre separados, sem conversão automática.
 |---|---|---|
 | 1 | Planejamento | Concluída |
 | 2 | Base do projeto, migrations e seed | **Concluída** |
-| 3 | Cadastros (entidades, pagar, receber, parcelas, pagamentos) | Pendente |
+| 3 | Cadastros (entidades, pagar, receber, parcelas, pagamentos) | **Código concluído**; falta testar com um Supabase real |
 | 4 | Painel e filtros | Pendente |
 | 5 | Cobranças | Pendente |
 | 6 | Resumo diário em modo teste (sem envio) | Pendente |
@@ -27,6 +27,47 @@ BRL e USD ficam sempre separados, sem conversão automática.
 | 8 | Publicação | Pendente |
 
 **Nenhum serviço externo está configurado e nenhum e-mail é enviado.**
+
+## Configurar o Supabase (passo a passo)
+
+Você faz estes passos no seu navegador. **Nunca cole senhas ou chaves em conversas, commits ou prints.**
+
+1. Crie uma conta em [supabase.com](https://supabase.com) e um **New project** (plano gratuito; região
+   *South America (São Paulo)*). Guarde a senha do banco em um gerenciador de senhas; o app não usa essa senha.
+2. No projeto, abra **SQL Editor** e execute, **nesta ordem**, o conteúdo de
+   `supabase/migrations/0001_schema.sql`, `0002_logic.sql` e `0003_rls.sql`.
+3. Abra **Authentication → Users → Add user** e crie o seu usuário (e-mail + senha, marcando *Auto Confirm User*).
+4. Em **Authentication → Sign In / Providers**, **desligue "Allow new users to sign up"**. O app é só seu e
+   não tem tela de cadastro.
+5. Em **Project Settings → API** (ou botão **Connect**), copie a **Project URL** e a chave **pública**
+   (*anon* ou *publishable*). **Nunca use a chave `service_role`/*secret* no app nesta etapa.**
+6. Na raiz do projeto, crie o arquivo `.env.local` com apenas estas duas linhas:
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=<sua Project URL>
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=<sua chave pública>
+   ```
+
+7. `npm install` e `npm run dev`, abra <http://localhost:3000> e entre com o usuário do passo 3.
+   Depois de editar o `.env.local`, reinicie o servidor.
+
+Primeiros passos no sistema: **Configurações** → cadastre suas empresas/categorias pessoais → crie uma conta
+a pagar e um valor a receber.
+
+> Não rode `supabase/seed.sql` no projeto real: ele cria dados fictícios que não têm botão de exclusão
+> (só de cancelamento). Teste com 1 ou 2 lançamentos seus ou use um segundo projeto Supabase só para testes.
+
+## O que a Etapa 3 entrega
+
+- **Login** por e-mail e senha (Supabase Auth). Todas as páginas exigem sessão.
+- **Configurações:** cadastrar, renomear e ativar/desativar empresas e categorias pessoais.
+- **Contas a pagar:** lista (só em aberto, ou todas), novo lançamento, edição, pagamentos parciais ou totais
+  (com remoção), cancelar/reativar, parcelas, recorrência e histórico de alterações.
+- **Contas a receber:** o mesmo, com contato do devedor, último contato e próxima ação de cobrança.
+- **Parcelas:** de 1 a 60, vencendo mensalmente a partir da 1ª data. O valor informado pode ser o total
+  (dividido sem perder centavos) ou o de cada parcela.
+- **Recorrência (a pagar):** ao quitar uma conta recorrente, o próximo vencimento é criado automaticamente, uma única vez.
+- O saldo e o status são calculados no banco; valores só são aceitos até o saldo pendente.
 
 ## Comandos
 
