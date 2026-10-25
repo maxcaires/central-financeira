@@ -6,7 +6,10 @@ import { login } from "./actions";
 
 export default async function LoginPage(props: PageProps<"/login">) {
   // Ler searchParams primeiro garante que a checagem abaixo rode por requisição, não no build.
-  const { erro } = await props.searchParams;
+  const { erro, detalhe } = await props.searchParams;
+  // Só exibe o detalhe se for um texto curto e simples (status/código técnico).
+  const detail =
+    typeof detalhe === "string" && /^[a-z0-9_ -]{1,90}$/.test(detalhe) ? detalhe : null;
   if (!getSupabaseEnv()) return <SetupNotice />;
 
   return (
@@ -19,6 +22,7 @@ export default async function LoginPage(props: PageProps<"/login">) {
       {typeof erro === "string" && (
         <p className={ui.error}>
           {isLoginErrorKind(erro) ? LOGIN_ERROR_MESSAGE[erro] : LOGIN_ERROR_MESSAGE.outro}
+          {detail && <span className="mt-1 block font-mono text-xs">Diagnóstico: {detail}</span>}
         </p>
       )}
 

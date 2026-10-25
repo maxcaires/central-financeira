@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { classifyLoginError } from "@/lib/auth-errors";
+import { classifyLoginError, safeErrorDetail } from "@/lib/auth-errors";
 import { createClient } from "@/lib/supabase/server";
 
 export async function login(formData: FormData) {
@@ -11,16 +11,24 @@ export async function login(formData: FormData) {
   if (!email || !password) redirect("/login?erro=credenciais");
 
   let kind: ReturnType<typeof classifyLoginError> | null = null;
+  let detail = "";
   try {
     const supabase = await createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) kind = classifyLoginError(error);
-  } catch {
-    // Falha inesperada (ex.: rede). redirect() fica fora do try, pois funciona lançando um erro.
+    if (error) {
+      kind = classifyLoginError(error);
+      if (kind === "outro") detail = safeErrorDetail(error);
+    }
+  } catch (e) {
+    // Falha inesperada. redirect() fica fora do try, pois funciona lançando um erro.
     kind = "conexao";
+    detail = e instanceof Error ? safeErrorDetail({ name: e.name }) : "";
   }
 
-  if (kind) redirect(`/login?erro=${kind}`);
+  if (kind) {
+    const extra = detail ? `&detalhe=${encodeURIComponent(detail)}` : "";
+    redirect(`/login?erro=${kind}${extra}`);
+  }
   redirect("/");
 }
 

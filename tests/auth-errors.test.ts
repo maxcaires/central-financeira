@@ -45,3 +45,16 @@ test("nunca devolve a mensagem bruta; só categorias conhecidas", () => {
   assert.equal(isLoginErrorKind(kind), true);
   assert.equal(isLoginErrorKind("<script>"), false);
 });
+
+import { safeErrorDetail } from "../src/lib/auth-errors.ts";
+
+test("safeErrorDetail devolve só status/código/nome, sem a mensagem", () => {
+  const d = safeErrorDetail({
+    status: 400,
+    code: "Some_Code!",
+    name: "AuthApiError",
+    message: "token secreto abc123",
+  });
+  assert.equal(d, "400 some_code authapierror");
+  assert.equal(d.includes("secreto"), false);
+});

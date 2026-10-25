@@ -32,6 +32,17 @@ interface AuthErrorLike {
   message?: string;
 }
 
+/** Detalhe técnico seguro (status + código) para diagnosticar erros não classificados. */
+export function safeErrorDetail(error: AuthErrorLike): string {
+  const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 40);
+  const parts = [
+    error.status !== undefined ? String(error.status) : "",
+    clean(error.code ?? ""),
+    clean(error.name ?? ""),
+  ].filter(Boolean);
+  return parts.join(" ");
+}
+
 export function classifyLoginError(error: AuthErrorLike): LoginErrorKind {
   const code = error.code ?? "";
   const message = error.message ?? "";
