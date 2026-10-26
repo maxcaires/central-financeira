@@ -22,7 +22,7 @@ BRL e USD ficam sempre separados, sem conversão automática.
 | 3 | Cadastros (entidades, pagar, receber, parcelas, pagamentos) | **Código concluído**; falta testar com um Supabase real |
 | 4 | Painel e filtros | **Concluída** (conferir no ambiente real) |
 | 5 | Cobranças | **Concluída** (conferir no ambiente real) |
-| 6 | Resumo diário em modo teste (sem envio) | Pendente |
+| 6 | Resumo diário em modo teste (sem envio) | **Concluída** (conferir no ambiente real) |
 | 7 | Envio real e agendamento | Pendente (requer autorização) |
 | 8 | Publicação | Pendente |
 
@@ -56,6 +56,20 @@ a pagar e um valor a receber.
 
 > Não rode `supabase/seed.sql` no projeto real: ele cria dados fictícios que não têm botão de exclusão
 > (só de cancelamento). Teste com 1 ou 2 lançamentos seus ou use um segundo projeto Supabase só para testes.
+
+## O que a Etapa 6 entrega (resumo diário em modo teste)
+
+Em **Configurações → Pré-visualizar o resumo de hoje** você vê o e-mail exatamente como ele seria montado:
+assunto, versão HTML e versão em texto. Dá para **simular outra data** (campo "Simular outra data").
+
+- Seções: vencidos, vencem hoje e próximos 7 dias; cada item aparece em uma só.
+- Agrupado por empresa/categoria, país e moeda, com subtotais; BRL e USD nunca são somados.
+- Cobranças com próxima ação para hoje ou atrasada aparecem como nota no próprio item.
+- Sem pendências, o resumo vira "nada pendente" (será enviado mesmo assim).
+- Todo texto digitado por você é escapado no HTML.
+
+Código em `src/lib/digest/` (`build.ts` monta, `render.ts` desenha), sem dependências e com testes.
+**Nada é enviado**: não há Resend, chave de e-mail nem agendamento nesta etapa.
 
 ## O que a Etapa 5 entrega (cobranças)
 

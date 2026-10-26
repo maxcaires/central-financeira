@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Flash } from "@/components/flash";
 import { requireUser } from "@/lib/auth";
 import { ui } from "@/lib/ui";
@@ -116,8 +117,11 @@ export default async function ConfiguracoesPage(props: PageProps<"/configuracoes
       <section className={ui.card}>
         <h2 className="font-medium">Resumo diário por e-mail</h2>
         <p className={`${ui.muted} mt-1`}>
-          Planejado para a Etapa 7. Nenhum e-mail é enviado e nada precisa ser configurado agora.
+          O envio real está planejado para a Etapa 7. Nenhum e-mail é enviado e nada precisa ser configurado agora.
         </p>
+        <Link href="/configuracoes/resumo" className={`${ui.btn} mt-3 inline-block`}>
+          Pré-visualizar o resumo de hoje
+        </Link>
       </section>
     </div>
   );
