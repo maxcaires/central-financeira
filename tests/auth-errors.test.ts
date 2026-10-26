@@ -58,3 +58,24 @@ test("safeErrorDetail devolve só status/código/nome, sem a mensagem", () => {
   assert.equal(d, "400 some_code authapierror");
   assert.equal(d.includes("secreto"), false);
 });
+
+test("404 indica endereço do Supabase incorreto", () => {
+  assert.equal(classifyLoginError({ name: "AuthApiError", status: 404 }), "endereco");
+});
+
+import { normalizeSupabaseUrl } from "../src/lib/supabase/env.ts";
+
+test("normalizeSupabaseUrl reduz a URL ao endereço principal", () => {
+  const base = "https://abcdefgh.supabase.co";
+  assert.equal(normalizeSupabaseUrl(base), base);
+  assert.equal(normalizeSupabaseUrl(`${base}/`), base);
+  assert.equal(normalizeSupabaseUrl(`${base}/rest/v1/`), base);
+  assert.equal(normalizeSupabaseUrl(`  ${base}/auth/v1  `), base);
+  assert.equal(normalizeSupabaseUrl("http://127.0.0.1:54321/rest/v1"), "http://127.0.0.1:54321");
+});
+
+test("normalizeSupabaseUrl rejeita o que não é URL http(s)", () => {
+  assert.equal(normalizeSupabaseUrl("abcdefgh.supabase.co"), null);
+  assert.equal(normalizeSupabaseUrl("javascript:alert(1)"), null);
+  assert.equal(normalizeSupabaseUrl(""), null);
+});

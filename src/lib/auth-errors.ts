@@ -6,6 +6,7 @@ export type LoginErrorKind =
   | "credenciais" // e-mail ou senha incorretos
   | "nao_confirmado" // usuário existe mas não confirmou o e-mail
   | "conexao" // não foi possível falar com o Supabase (URL errada, fora do ar)
+  | "endereco" // o Supabase respondeu 404: a URL aponta para o lugar errado
   | "chave" // chave pública (anon/publishable) rejeitada
   | "limite" // muitas tentativas
   | "outro";
@@ -15,6 +16,8 @@ export const LOGIN_ERROR_MESSAGE: Record<LoginErrorKind, string> = {
   nao_confirmado: "Este usuário ainda não foi confirmado no Supabase.",
   conexao:
     "Não foi possível conectar ao Supabase. Confira a variável NEXT_PUBLIC_SUPABASE_URL na Vercel e faça um Redeploy.",
+  endereco:
+    "O endereço do Supabase parece incorreto (erro 404). Confira NEXT_PUBLIC_SUPABASE_URL na Vercel: deve ser a Project URL, no formato https://xxxxxxxx.supabase.co, e o projeto não pode estar pausado. Depois faça um Redeploy.",
   chave:
     "O Supabase recusou a chave pública. Confira NEXT_PUBLIC_SUPABASE_ANON_KEY na Vercel (use a chave pública, não a secreta) e faça um Redeploy.",
   limite: "Muitas tentativas. Aguarde alguns minutos e tente de novo.",
@@ -51,6 +54,7 @@ export function classifyLoginError(error: AuthErrorLike): LoginErrorKind {
   if (code === "invalid_credentials") return "credenciais";
   if (code === "email_not_confirmed") return "nao_confirmado";
   if (code === "over_request_rate_limit" || status === 429) return "limite";
+  if (status === 404) return "endereco";
 
   if (
     /api[\s_-]?key/i.test(message) ||
