@@ -12,7 +12,14 @@ import type { ActivityRow } from "@/lib/history";
 import { COUNTRY_LABEL, OPEN_RECEIVABLE_STATUSES, RECEIVABLE_STATUS_LABEL } from "@/lib/labels";
 import { formatInputAmount, formatMoney, type Currency } from "@/lib/money";
 import { ui } from "@/lib/ui";
-import { addReceipt, deleteReceipt, setReceivableCancelled, updateReceivable } from "../actions";
+import { DeleteSection } from "@/components/delete-section";
+import {
+  addReceipt,
+  deleteReceipt,
+  deleteReceivable,
+  setReceivableCancelled,
+  updateReceivable,
+} from "../actions";
 
 export default async function ValorReceberPage(props: PageProps<"/receber/[id]">) {
   const { id } = await props.params;
@@ -273,6 +280,17 @@ export default async function ValorReceberPage(props: PageProps<"/receber/[id]">
           </span>
         </form>
       </section>
+
+      <DeleteSection
+        action={deleteReceivable}
+        id={id}
+        noun="este lançamento"
+        consequences={
+          isInstallment
+            ? "Apaga esta parcela, os recebimentos e o histórico de cobrança dela; as outras parcelas continuam."
+            : "Apaga o lançamento, os recebimentos e o histórico de cobrança dele."
+        }
+      />
 
       <section className={ui.card}>
         <h2 className="mb-3 font-medium">Histórico</h2>

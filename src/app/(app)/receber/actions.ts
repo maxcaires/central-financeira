@@ -191,3 +191,21 @@ export async function setReceivableCancelled(formData: FormData) {
 
   flash(back, "ok", cancel ? "Lançamento cancelado." : "Lançamento reativado.");
 }
+
+export async function deleteReceivable(formData: FormData) {
+  const { supabase } = await requireUser();
+
+  const id = field(formData, "id");
+  if (!isUuid(id)) flash(LIST, "erro", "Lançamento inválido.");
+  const back = `${LIST}/${id}`;
+
+  // Segunda confirmação no servidor: o formulário precisa trazer a marca explícita.
+  if (field(formData, "confirm") !== "sim")
+    flash(back, "erro", "Confirme a exclusão para continuar.");
+
+  const { data, error } = await supabase.from("receivables").delete().eq("id", id).select("id");
+  if (error) flash(back, "erro", "Não foi possível excluir o lançamento.");
+  if (!data || data.length === 0) flash(LIST, "erro", "Lançamento não encontrado.");
+
+  flash(LIST, "ok", "Lançamento excluído, junto com seus recebimentos e cobranças.");
+}

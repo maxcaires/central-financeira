@@ -222,3 +222,21 @@ export async function setPayableCancelled(formData: FormData) {
 
   flash(back, "ok", cancel ? "Conta cancelada." : "Conta reativada.");
 }
+
+export async function deletePayable(formData: FormData) {
+  const { supabase } = await requireUser();
+
+  const id = field(formData, "id");
+  if (!isUuid(id)) flash(LIST, "erro", "Conta inválida.");
+  const back = `${LIST}/${id}`;
+
+  // Segunda confirmação no servidor: o formulário precisa trazer a marca explícita.
+  if (field(formData, "confirm") !== "sim")
+    flash(back, "erro", "Confirme a exclusão para continuar.");
+
+  const { data, error } = await supabase.from("payables").delete().eq("id", id).select("id");
+  if (error) flash(back, "erro", "Não foi possível excluir a conta.");
+  if (!data || data.length === 0) flash(LIST, "erro", "Conta não encontrada.");
+
+  flash(LIST, "ok", "Conta excluída, junto com seus pagamentos.");
+}

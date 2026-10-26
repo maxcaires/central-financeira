@@ -11,7 +11,14 @@ import type { ActivityRow } from "@/lib/history";
 import { COUNTRY_LABEL, OPEN_PAYABLE_STATUSES, PAYABLE_STATUS_LABEL } from "@/lib/labels";
 import { formatInputAmount, formatMoney, type Currency } from "@/lib/money";
 import { ui } from "@/lib/ui";
-import { addPayment, deletePayment, setPayableCancelled, updatePayable } from "../actions";
+import { DeleteSection } from "@/components/delete-section";
+import {
+  addPayment,
+  deletePayable,
+  deletePayment,
+  setPayableCancelled,
+  updatePayable,
+} from "../actions";
 
 export default async function ContaPagarPage(props: PageProps<"/pagar/[id]">) {
   const { id } = await props.params;
@@ -229,6 +236,17 @@ export default async function ContaPagarPage(props: PageProps<"/pagar/[id]">) {
           </span>
         </form>
       </section>
+
+      <DeleteSection
+        action={deletePayable}
+        id={id}
+        noun="esta conta"
+        consequences={
+          isInstallment
+            ? "Apaga esta parcela e os pagamentos dela; as outras parcelas continuam."
+            : "Apaga a conta e todos os pagamentos dela."
+        }
+      />
 
       <section className={ui.card}>
         <h2 className="mb-3 font-medium">Histórico</h2>
