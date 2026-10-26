@@ -9,13 +9,13 @@ export function SetupNotice() {
         <h2 className="font-medium">Configuração pendente</h2>
         <p className={`${ui.muted} mt-2`}>
           O Supabase ainda não foi configurado. Crie o arquivo{" "}
-          <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">.env.local</code> na raiz do
+          <code className="rounded bg-sunken px-1">.env.local</code> na raiz do
           projeto com{" "}
-          <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">
+          <code className="rounded bg-sunken px-1">
             NEXT_PUBLIC_SUPABASE_URL
           </code>{" "}
           e{" "}
-          <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">
+          <code className="rounded bg-sunken px-1">
             NEXT_PUBLIC_SUPABASE_ANON_KEY
           </code>
           , conforme o passo a passo do README, e reinicie o servidor.

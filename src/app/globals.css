@@ -1,27 +1,109 @@
 @import "tailwindcss";
 
+/* Paleta: tinta (azul-marinho) para estrutura; coral = dinheiro que sai; verde-água = dinheiro que entra. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --canvas: #f0f2f6;
+  --surface: #ffffff;
+  --sunken: #f6f7fa;
+  --line: #e2e6ee;
+  --ink: #0f1b2d;
+  --muted: #5a667a;
+  --pay: #d4402a;
+  --pay-soft: #fdeae6;
+  --rec: #0b8577;
+  --rec-soft: #dff4f1;
+  --warn: #a8660b;
+  --warn-soft: #fdf1d9;
+  --danger: #c0262d;
+  --danger-soft: #fde8e9;
+  --brand: #13294b;
+  --brand-ink: #ffffff;
+  --side: #0d1a2e;
+  --side-ink: #b9c4d8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #090f1b;
+    --surface: #111a2c;
+    --sunken: #0d1524;
+    --line: #223049;
+    --ink: #e8edf6;
+    --muted: #94a2b9;
+    --pay: #ff8566;
+    --pay-soft: #3a1a15;
+    --rec: #35d0bd;
+    --rec-soft: #0f2f2c;
+    --warn: #f0b24a;
+    --warn-soft: #34260c;
+    --danger: #ff7b81;
+    --danger-soft: #3b1518;
+    --brand: #e8edf6;
+    --brand-ink: #0d1a2e;
+    --side: #070c16;
+    --side-ink: #94a2b9;
+  }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-pay: var(--pay);
+  --color-pay-soft: var(--pay-soft);
+  --color-rec: var(--rec);
+  --color-rec-soft: var(--rec-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-side: var(--side);
+  --color-side-ink: var(--side-ink);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "tnum" 1, "cv11" 1;
+  -webkit-font-smoothing: antialiased;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
+:focus-visible {
+  outline: 2px solid var(--rec);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .rise > * {
+    transform-origin: bottom;
+    animation: grow 620ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+}
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
 }

@@ -119,7 +119,7 @@ export default async function ContaPagarPage(props: PageProps<"/pagar/[id]">) {
           <p className={`${ui.muted} mt-2`}>Nenhum pagamento registrado.</p>
         ) : (
           <table className="mt-2 w-full">
-            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tbody className="divide-y divide-line">
               {(payments ?? []).map((pay) => (
                 <tr key={pay.id}>
                   <td className={ui.td}>{formatDateBR(pay.paid_on)}</td>
@@ -141,7 +141,7 @@ export default async function ContaPagarPage(props: PageProps<"/pagar/[id]">) {
         )}
 
         {p.status !== "cancelled" && Number(p.balance) > 0 && (
-          <form action={addPayment} className="mt-4 grid gap-4 border-t border-zinc-200 pt-4 sm:grid-cols-4 dark:border-zinc-800">
+          <form action={addPayment} className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-4">
             <input type="hidden" name="id" value={id} />
             <label className={ui.label}>
               Valor pago
@@ -177,7 +177,7 @@ export default async function ContaPagarPage(props: PageProps<"/pagar/[id]">) {
         <section className={ui.card}>
           <h2 className="font-medium">Parcelas</h2>
           <table className="mt-2 w-full">
-            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tbody className="divide-y divide-line">
               {(siblings ?? []).map((s) => (
                 <tr key={s.id} className={s.id === id ? "font-semibold" : ""}>
                   <td className={ui.td}>

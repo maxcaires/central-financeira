@@ -59,9 +59,9 @@ export default async function PagarPage(props: PageProps<"/pagar">) {
         <span className="text-sm font-medium">{formatMoney(openBalances.USD, "USD")}</span>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+      <div className="overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[820px]">
-          <thead className="bg-zinc-50 dark:bg-zinc-900">
+          <thead className="bg-sunken">
             <tr>
               <th className={ui.th}>Vencimento</th>
               <th className={ui.th}>Descrição</th>
@@ -72,12 +72,12 @@ export default async function PagarPage(props: PageProps<"/pagar">) {
               <th className={ui.th}>Situação</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <tbody className="divide-y divide-line">
             {rows.map((p) => {
               const isOpen = (OPEN_PAYABLE_STATUSES as readonly string[]).includes(p.status);
               const currency = p.currency as Currency;
               return (
-                <tr key={p.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                <tr key={p.id} className="hover:bg-sunken">
                   <td className={ui.td}>{formatDateBR(p.due_date)}</td>
                   <td className={ui.td}>
                     <Link href={`/pagar/${p.id}`} className="font-medium underline-offset-2 hover:underline">

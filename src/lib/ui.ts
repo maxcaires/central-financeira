@@ -1,29 +1,25 @@
 // Classes Tailwind compartilhadas, para manter as telas consistentes.
+// As cores vêm das variáveis de globals.css (claro/escuro automáticos).
 
 export const ui = {
-  label: "block text-sm font-medium text-zinc-700 dark:text-zinc-300",
+  label: "block text-sm font-medium text-ink",
   input:
-    "mt-1 block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm shadow-sm " +
-    "focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 " +
-    "dark:border-zinc-700 dark:bg-zinc-900",
+    "mt-1 block w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink " +
+    "placeholder:text-muted focus:border-rec focus:outline-none focus:ring-2 focus:ring-rec/25",
   btn:
-    "inline-flex items-center justify-center rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium " +
-    "text-white hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300",
+    "inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-medium " +
+    "text-brand-ink transition-opacity hover:opacity-90",
   btnSecondary:
-    "inline-flex items-center justify-center rounded-md border border-zinc-300 px-4 py-2 text-sm " +
-    "font-medium hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800",
+    "inline-flex items-center justify-center rounded-lg border border-line bg-surface px-4 py-2 " +
+    "text-sm font-medium text-ink hover:bg-sunken",
   btnDanger:
-    "inline-flex items-center justify-center rounded-md border border-red-300 px-4 py-2 text-sm " +
-    "font-medium text-red-700 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950",
-  card: "rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950",
-  th: "px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500",
+    "inline-flex items-center justify-center rounded-lg border border-danger/40 px-4 py-2 text-sm " +
+    "font-medium text-danger hover:bg-danger-soft",
+  card: "rounded-2xl border border-line bg-surface p-5",
+  th: "px-3 py-2 text-left text-xs font-medium text-muted",
   td: "px-3 py-2 text-sm",
   h1: "text-2xl font-semibold tracking-tight",
-  muted: "text-sm text-zinc-500 dark:text-zinc-400",
-  error:
-    "rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 " +
-    "dark:border-red-900 dark:bg-red-950 dark:text-red-300",
-  notice:
-    "rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-800 " +
-    "dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-300",
+  muted: "text-sm text-muted",
+  error: "rounded-lg border border-danger/40 bg-danger-soft px-3 py-2 text-sm text-danger",
+  notice: "rounded-lg border border-rec/40 bg-rec-soft px-3 py-2 text-sm text-rec",
 } as const;

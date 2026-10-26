@@ -12,7 +12,7 @@ export interface ContactDefaults {
 /** Contato do devedor e controle de cobrança (todos opcionais). */
 export function ContactFields({ defaults = {} }: { defaults?: ContactDefaults }) {
   return (
-    <fieldset className="grid gap-4 border-t border-zinc-200 pt-4 sm:grid-cols-2 dark:border-zinc-800">
+    <fieldset className="grid gap-4 border-t border-line pt-4 sm:grid-cols-2">
       <legend className="pr-2 text-sm font-medium">Contato e cobrança (opcional)</legend>
       <label className={ui.label}>
         Telefone

@@ -41,7 +41,7 @@ export default async function ConfiguracoesPage(props: PageProps<"/configuracoes
                 <th className={ui.th}>Situação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tbody className="divide-y divide-line">
               {(entities ?? []).map((e) => (
                 <tr key={e.id} className={e.active ? "" : "opacity-60"}>
                   <td className={ui.td}>

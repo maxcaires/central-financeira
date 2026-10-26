@@ -44,7 +44,7 @@ export default async function ResumoPreviewPage(props: PageProps<"/configuracoes
       </div>
 
       {failed && (
-        <p role="alert" className="rounded border border-red-300 bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="rounded-lg border border-danger/40 bg-danger-soft p-3 text-sm text-danger">
           Não foi possível carregar todos os lançamentos. A pré-visualização pode estar incompleta.
         </p>
       )}
@@ -78,7 +78,7 @@ export default async function ResumoPreviewPage(props: PageProps<"/configuracoes
           title="Pré-visualização do e-mail"
           sandbox=""
           srcDoc={renderHtml(digest)}
-          className="h-[640px] w-full rounded border border-zinc-300 bg-white dark:border-zinc-700"
+          className="h-[640px] w-full rounded-xl border border-line bg-white"
         />
       </section>
 

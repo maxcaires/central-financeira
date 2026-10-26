@@ -1,8 +1,8 @@
 const TONES = {
-  neutral: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
-  warn: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
-  danger: "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300",
-  good: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
+  neutral: "bg-sunken text-muted",
+  warn: "bg-warn-soft text-warn",
+  danger: "bg-danger-soft text-danger",
+  good: "bg-rec-soft text-rec",
 } as const;
 
 export function Badge({

@@ -169,7 +169,7 @@ export default async function ValorReceberPage(props: PageProps<"/receber/[id]">
           <p className={`${ui.muted} mt-2`}>Nenhum recebimento registrado.</p>
         ) : (
           <table className="mt-2 w-full">
-            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tbody className="divide-y divide-line">
               {(receipts ?? []).map((rc) => (
                 <tr key={rc.id}>
                   <td className={ui.td}>{formatDateBR(rc.received_on)}</td>
@@ -191,7 +191,7 @@ export default async function ValorReceberPage(props: PageProps<"/receber/[id]">
         )}
 
         {r.status !== "cancelled" && Number(r.balance) > 0 && (
-          <form action={addReceipt} className="mt-4 grid gap-4 border-t border-zinc-200 pt-4 sm:grid-cols-4 dark:border-zinc-800">
+          <form action={addReceipt} className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-4">
             <input type="hidden" name="id" value={id} />
             <label className={ui.label}>
               Valor recebido
@@ -237,7 +237,7 @@ export default async function ValorReceberPage(props: PageProps<"/receber/[id]">
         <section className={ui.card}>
           <h2 className="font-medium">Parcelas</h2>
           <table className="mt-2 w-full">
-            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tbody className="divide-y divide-line">
               {(siblings ?? []).map((s) => (
                 <tr key={s.id} className={s.id === id ? "font-semibold" : ""}>
                   <td className={ui.td}>

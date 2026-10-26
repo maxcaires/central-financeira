@@ -59,9 +59,9 @@ export default async function ReceberPage(props: PageProps<"/receber">) {
         <span className="text-sm font-medium">{formatMoney(openBalances.USD, "USD")}</span>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+      <div className="overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[900px]">
-          <thead className="bg-zinc-50 dark:bg-zinc-900">
+          <thead className="bg-sunken">
             <tr>
               <th className={ui.th}>Vencimento</th>
               <th className={ui.th}>Descrição / devedor</th>
@@ -73,12 +73,12 @@ export default async function ReceberPage(props: PageProps<"/receber">) {
               <th className={ui.th}>Situação</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+          <tbody className="divide-y divide-line">
             {rows.map((r) => {
               const isOpen = (OPEN_RECEIVABLE_STATUSES as readonly string[]).includes(r.status);
               const currency = r.currency as Currency;
               return (
-                <tr key={r.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                <tr key={r.id} className="hover:bg-sunken">
                   <td className={ui.td}>{formatDateBR(r.due_date)}</td>
                   <td className={ui.td}>
                     <Link href={`/receber/${r.id}`} className="font-medium underline-offset-2 hover:underline">
@@ -99,7 +99,7 @@ export default async function ReceberPage(props: PageProps<"/receber">) {
                   </td>
                   <td className={ui.td}>
                     {isOpen && r.next_action_at ? (
-                      <span className={r.next_action_at <= today ? "font-medium text-amber-700 dark:text-amber-400" : ""}>
+                      <span className={r.next_action_at <= today ? "font-medium text-warn" : ""}>
                         {formatDateBR(r.next_action_at)}
                       </span>
                     ) : (

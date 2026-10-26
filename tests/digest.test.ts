@@ -179,3 +179,32 @@ test("render mostra moedas separadas, parcela, cobrança e aviso de truncamento"
   assert.ok(renderHtml(d).includes("incompleta"));
   assert.ok(txt.includes("1.500,50"));
 });
+
+import { buildWeek, daysBetween, weekdayOf } from "../src/lib/week.ts";
+
+test("linha do tempo: atrasados, hoje e 7 dias, cada item em uma coluna", () => {
+  const cols = buildWeek(
+    [
+      item({ id: "a", due_date: "2026-10-01", balance: 10 }),
+      item({ id: "b", due_date: TODAY, balance: 5 }),
+      item({ id: "c", due_date: "2026-11-02", balance: 7, currency: "USD" }),
+      item({ id: "d", due_date: "2026-11-03" }), // fora
+      item({ id: "e", due_date: TODAY, balance: 0 }), // quitado
+    ],
+    [item({ id: "r", due_date: "2026-10-28", balance: 3 })],
+    TODAY,
+  );
+  assert.equal(cols.length, 9);
+  assert.deepEqual(cols.map((c) => c.kind).slice(0, 3), ["overdue", "today", "day"]);
+  assert.equal(cols[0].payCount, 1);
+  assert.equal(cols[1].payCount, 1);
+  assert.equal(cols[3].recCount, 1); // 28/10
+  assert.equal(cols[8].date, "2026-11-02");
+  assert.deepEqual(cols[8].pay, { BRL: 0, USD: 7 });
+  assert.equal(cols.reduce((n, c) => n + c.payCount + c.recCount, 0), 4);
+});
+
+test("weekdayOf e daysBetween", () => {
+  assert.equal(weekdayOf("2026-10-26"), "seg");
+  assert.equal(daysBetween("2026-10-20", "2026-10-26"), 6);
+});
