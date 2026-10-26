@@ -21,7 +21,7 @@ BRL e USD ficam sempre separados, sem conversão automática.
 | 2 | Base do projeto, migrations e seed | **Concluída** |
 | 3 | Cadastros (entidades, pagar, receber, parcelas, pagamentos) | **Código concluído**; falta testar com um Supabase real |
 | 4 | Painel e filtros | **Concluída** (conferir no ambiente real) |
-| 5 | Cobranças | Pendente |
+| 5 | Cobranças | **Concluída** (conferir no ambiente real) |
 | 6 | Resumo diário em modo teste (sem envio) | Pendente |
 | 7 | Envio real e agendamento | Pendente (requer autorização) |
 | 8 | Publicação | Pendente |
@@ -56,6 +56,20 @@ a pagar e um valor a receber.
 
 > Não rode `supabase/seed.sql` no projeto real: ele cria dados fictícios que não têm botão de exclusão
 > (só de cancelamento). Teste com 1 ou 2 lançamentos seus ou use um segundo projeto Supabase só para testes.
+
+## O que a Etapa 5 entrega (cobranças)
+
+Na página de cada valor a receber, a seção **Histórico de cobrança** permite:
+
+- **Registrar um contato:** data (não pode ser futura), canal (telefone, WhatsApp, e-mail, pessoalmente ou outro),
+  o que foi combinado e a **próxima ação** (data e nota).
+- Registrar um contato **resolve a pendência anterior**: a próxima ação passa a ser a nova data informada,
+  ou nenhuma se o campo ficar em branco. O "último contato" nunca recua.
+- **Remover** um registro enganado do histórico (isso não altera o último contato nem a próxima ação).
+- As cobranças com próxima ação para hoje ou atrasada aparecem no painel, com link para registrar o contato.
+
+Regras em `src/lib/collections.ts` (sem dependências e com testes). Não exige nova migration: usa a tabela
+`collection_log` que já existia.
 
 ## O que a Etapa 4 entrega (painel)
 

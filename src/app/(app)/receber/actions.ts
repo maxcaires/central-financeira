@@ -1,6 +1,7 @@
 "use server";
 
 import { flash, requireUser } from "@/lib/auth";
+import { latestContact, parseContactLog } from "@/lib/collections";
 import { isValidIsoDate, todayInZone } from "@/lib/dates";
 import { isUuid, parseContactFields, parseEntryForm } from "@/lib/entries";
 import { formatMoney, parseMoneyToCents, toCents, type Currency } from "@/lib/money";
@@ -208,4 +209,73 @@ export async function deleteReceivable(formData: FormData) {
   if (!data || data.length === 0) flash(LIST, "erro", "Lançamento não encontrado.");
 
   flash(LIST, "ok", "Lançamento excluído, junto com seus recebimentos e cobranças.");
+}
+
+export async function addCollectionContact(formData: FormData) {
+  const { supabase } = await requireUser();
+
+  const id = field(formData, "id");
+  if (!isUuid(id)) flash(LIST, "erro", "Lançamento inválido.");
+  const back = `${LIST}/${id}`;
+
+  const parsed = parseContactLog(formData, todayInZone());
+  if (!parsed.ok) flash(back, "erro", parsed.error);
+  const v = parsed.value;
+
+  const { data: current } = await supabase
+    .from("receivables")
+    .select("id, last_contact_at")
+    .eq("id", id)
+    .maybeSingle();
+  if (!current) flash(LIST, "erro", "Lançamento não encontrado.");
+
+  const { error: logError } = await supabase.from("collection_log").insert({
+    receivable_id: id,
+    contacted_on: v.contacted_on,
+    channel: v.channel,
+    note: v.note,
+    next_action_at: v.next_action_at,
+  });
+  if (logError) flash(back, "erro", "Não foi possível registrar o contato.");
+
+  // Registrar um contato resolve a pendência anterior: a próxima ação passa a ser a nova
+  // (ou nenhuma, se o campo ficou em branco).
+  const { error: updError } = await supabase
+    .from("receivables")
+    .update({
+      last_contact_at: latestContact(current.last_contact_at, v.contacted_on),
+      next_action_at: v.next_action_at,
+      next_action_note: v.next_action_note,
+    })
+    .eq("id", id);
+  if (updError)
+    flash(
+      back,
+      "erro",
+      "O contato foi registrado, mas não foi possível atualizar a próxima ação. Ajuste em Editar.",
+    );
+
+  flash(
+    back,
+    "ok",
+    v.next_action_at ? "Contato registrado e próxima ação agendada." : "Contato registrado.",
+  );
+}
+
+export async function deleteCollectionContact(formData: FormData) {
+  const { supabase } = await requireUser();
+
+  const entryId = field(formData, "entry_id");
+  const id = field(formData, "id");
+  if (!isUuid(entryId) || !isUuid(id)) flash(LIST, "erro", "Registro inválido.");
+  const back = `${LIST}/${id}`;
+
+  const { error } = await supabase
+    .from("collection_log")
+    .delete()
+    .eq("id", entryId)
+    .eq("receivable_id", id);
+  if (error) flash(back, "erro", "Não foi possível remover o registro.");
+
+  flash(back, "ok", "Registro removido do histórico. Último contato e próxima ação não mudaram.");
 }

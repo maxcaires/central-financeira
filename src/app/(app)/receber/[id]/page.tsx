@@ -12,9 +12,12 @@ import type { ActivityRow } from "@/lib/history";
 import { COUNTRY_LABEL, OPEN_RECEIVABLE_STATUSES, RECEIVABLE_STATUS_LABEL } from "@/lib/labels";
 import { formatInputAmount, formatMoney, type Currency } from "@/lib/money";
 import { ui } from "@/lib/ui";
+import { CollectionSection, type CollectionEntry } from "@/components/collection-section";
 import { DeleteSection } from "@/components/delete-section";
 import {
+  addCollectionContact,
   addReceipt,
+  deleteCollectionContact,
   deleteReceipt,
   deleteReceivable,
   setReceivableCancelled,
@@ -40,8 +43,13 @@ export default async function ValorReceberPage(props: PageProps<"/receber/[id]">
   const isOpen = (OPEN_RECEIVABLE_STATUSES as readonly string[]).includes(r.status);
   const isInstallment = r.installment_group_id !== null;
 
-  const [{ data: entities }, { data: receipts }, { data: siblings }, { data: history }] =
-    await Promise.all([
+  const [
+    { data: entities },
+    { data: receipts },
+    { data: siblings },
+    { data: history },
+    { data: collection },
+  ] = await Promise.all([
       supabase.from("entities").select("id, name, country, active").order("country").order("name"),
       supabase
         .from("receivable_receipts")
@@ -64,6 +72,13 @@ export default async function ValorReceberPage(props: PageProps<"/receber/[id]">
         )
         .order("created_at", { ascending: false })
         .limit(50),
+      supabase
+        .from("collection_log")
+        .select("id, contacted_on, channel, note, next_action_at")
+        .eq("receivable_id", id)
+        .order("contacted_on", { ascending: false })
+        .order("created_at", { ascending: false })
+        .limit(100),
     ]);
 
   const entityOptions = (entities ?? []).filter((e) => e.active || e.id === r.entity_id);
@@ -207,6 +222,16 @@ export default async function ValorReceberPage(props: PageProps<"/receber/[id]">
           </form>
         )}
       </section>
+
+      <CollectionSection
+        id={id}
+        entries={(collection ?? []) as CollectionEntry[]}
+        today={today}
+        nextActionAt={isOpen ? r.next_action_at : null}
+        nextActionNote={isOpen ? r.next_action_note : null}
+        addAction={addCollectionContact}
+        deleteAction={deleteCollectionContact}
+      />
 
       {isInstallment && (siblings ?? []).length > 1 && (
         <section className={ui.card}>
