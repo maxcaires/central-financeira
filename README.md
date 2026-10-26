@@ -20,7 +20,7 @@ BRL e USD ficam sempre separados, sem conversão automática.
 | 1 | Planejamento | Concluída |
 | 2 | Base do projeto, migrations e seed | **Concluída** |
 | 3 | Cadastros (entidades, pagar, receber, parcelas, pagamentos) | **Código concluído**; falta testar com um Supabase real |
-| 4 | Painel e filtros | Pendente |
+| 4 | Painel e filtros | **Concluída** (conferir no ambiente real) |
 | 5 | Cobranças | Pendente |
 | 6 | Resumo diário em modo teste (sem envio) | Pendente |
 | 7 | Envio real e agendamento | Pendente (requer autorização) |
@@ -56,6 +56,18 @@ a pagar e um valor a receber.
 
 > Não rode `supabase/seed.sql` no projeto real: ele cria dados fictícios que não têm botão de exclusão
 > (só de cancelamento). Teste com 1 ou 2 lançamentos seus ou use um segundo projeto Supabase só para testes.
+
+## O que a Etapa 4 entrega (painel)
+
+A tela inicial mostra, para **hoje** (fuso America/Sao_Paulo):
+
+- **Resumo** de saldos pendentes por moeda: vencidos, vencem hoje e próximos 7 dias, a pagar e a receber.
+- **Listas detalhadas** de cada seção, com link para o lançamento.
+- **Cobranças para hoje ou atrasadas:** valores a receber com "próxima ação" até hoje, mesmo que o vencimento seja futuro.
+- **Filtros** por empresa/categoria, tipo (empresas ou pessoal), país, moeda e situação (sem pagamento ou parcial). O filtro fica na URL, então dá para salvar nos favoritos.
+
+Cada item aparece em uma única seção (vencido, hoje ou próximos 7 dias), e itens quitados ou cancelados não entram.
+A regra fica em `src/lib/dashboard.ts`, sem dependências, e será reaproveitada no resumo diário (Etapa 6).
 
 ## O que a Etapa 3 entrega
 
