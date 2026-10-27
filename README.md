@@ -25,6 +25,7 @@ BRL e USD ficam sempre separados, sem conversão automática.
 | 6 | Resumo diário em modo teste (sem envio) | **Concluída** (conferir no ambiente real) |
 | 7 | Envio real e agendamento | **Código pronto**; falta configurar Resend/Vercel/agendamento (abaixo) |
 | 8 | Publicação | Pendente |
+| Extra | Assets (imóveis, carros e outros bens) | **Concluída**; exige rodar `0004_assets.sql` no Supabase |
 
 O resumo só é enviado depois de você ligar em Configurações **e** configurar os passos da Etapa 7.
 
@@ -76,6 +77,15 @@ sem gastar o envio do dia) e, por fim, `supabase/schedule_daily_digest.sql` no S
 
 A rota recusa chamadas sem o segredo, grava um registro por dia em `digest_runs` (nunca envia duas vezes no mesmo
 dia; se a tentativa falhar, a próxima chamada tenta de novo) e não envia se não conseguir carregar os lançamentos.
+
+## Assets (extra)
+
+Menu **Assets**: lista de bens (imóveis, carros e outros) no Brasil e nos EUA, só para acompanhamento. Cada um tem
+nome, tipo, país, valor estimado opcional (com moeda, BRL e USD separados e nunca somados) e observações livres.
+Dá para adicionar, editar e remover (a remoção pede confirmação). Não mexe em contas, painel nem no resumo diário.
+
+Antes de usar, rode `supabase/migrations/0004_assets.sql` no SQL Editor do Supabase (cria só a tabela `assets`).
+Regras em `src/lib/assets.ts`, com testes.
 
 ## O que a Etapa 6 entrega (resumo diário em modo teste)
 
@@ -152,7 +162,7 @@ src/lib/dates.ts            Datas no fuso America/Sao_Paulo e classificação de
 src/lib/digest/             Montagem do resumo diário (Etapa 6)
 src/lib/supabase/           Clientes do Supabase (Etapa 3)
 src/types/                  Tipos do domínio
-supabase/migrations/        SQL versionado (0001 tabelas, 0002 regras, 0003 RLS)
+supabase/migrations/        SQL versionado (0001 tabelas, 0002 regras, 0003 RLS, 0004 assets)
 supabase/seed.sql           Dados fictícios de desenvolvimento
 emails/                     Template do resumo (Etapa 6/7)
 tests/                      Testes

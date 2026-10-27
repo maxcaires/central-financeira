@@ -7,6 +7,7 @@ const ICONS: Record<string, React.ReactNode> = {
   painel: <path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z" />,
   pagar: <path d="M12 4v12m0 0-4-4m4 4 4-4M5 20h14" />,
   receber: <path d="M12 20V8m0 0-4 4m4-4 4 4M5 4h14" />,
+  assets: <path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" />,
   config: (
     <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.4-2a7.5 7.5 0 0 0 0-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 0 0-1.7-1L15 3h-4l-.4 2.5a7.6 7.6 0 0 0-1.7 1l-2.3-.9-2 3.4 2 1.5a7.5 7.5 0 0 0 0 2l-2 1.5 2 3.4 2.3-.9c.5.4 1.1.7 1.7 1L11 21h4l.4-2.5c.6-.3 1.2-.6 1.7-1l2.3.9 2-3.4-2-1.5Z" />
   ),
@@ -16,6 +17,7 @@ export const NAV = [
   { href: "/", label: "Painel", icon: "painel" },
   { href: "/pagar", label: "A pagar", icon: "pagar" },
   { href: "/receber", label: "A receber", icon: "receber" },
+  { href: "/assets", label: "Assets", icon: "assets" },
   { href: "/configuracoes", label: "Configurações", icon: "config" },
 ] as const;
 

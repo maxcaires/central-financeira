@@ -9,11 +9,14 @@ export function DeleteSection({
   id,
   noun,
   consequences,
+  hint,
 }: {
   action: (formData: FormData) => void | Promise<void>;
   id: string;
   noun: string;
   consequences: string;
+  /** Texto final do aviso; use "" para não mostrar a dica de Cancelar (que só existe nas contas). */
+  hint?: string;
 }) {
   return (
     <section className={ui.card}>
@@ -25,8 +28,8 @@ export function DeleteSection({
         <form action={action} className="mt-4 flex flex-col gap-3">
           <input type="hidden" name="id" value={id} />
           <p className={ui.error}>
-            Esta ação não pode ser desfeita. {consequences} Para apenas tirar dos vencimentos
-            mantendo o histórico, use Cancelar.
+            Esta ação não pode ser desfeita. {consequences}
+            {hint ?? " Para apenas tirar dos vencimentos mantendo o histórico, use Cancelar."}
           </p>
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" name="confirm" value="sim" required />
