@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Flash } from "@/components/flash";
 import { requireUser } from "@/lib/auth";
 import { ui } from "@/lib/ui";
-import { createEntity, renameEntity, saveDigestSettings, setEntityActive } from "./actions";
+import { createEntity, renameEntity, saveDigestSettings, sendTestDigest, setEntityActive } from "./actions";
 
 const KIND_LABEL = { company: "Empresa", personal: "Pessoal" } as const;
 const COUNTRY_LABEL = { BR: "Brasil", US: "EUA" } as const;
@@ -158,6 +158,12 @@ export default async function ConfiguracoesPage(props: PageProps<"/configuracoes
               Pré-visualizar o resumo de hoje
             </Link>
           </div>
+        </form>
+        <form action={sendTestDigest} className="mt-3 flex flex-wrap items-center gap-3 border-t border-line pt-3">
+          <button type="submit" className={ui.btnSecondary}>
+            Enviar e-mail de teste agora
+          </button>
+          <span className={ui.muted}>Marcado [TESTE]; não conta como o envio do dia.</span>
         </form>
       </section>
     </div>

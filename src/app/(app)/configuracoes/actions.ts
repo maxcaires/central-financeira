@@ -2,6 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { flash, requireUser } from "@/lib/auth";
+import { EMPTY_FILTERS } from "@/lib/dashboard";
+import { loadDueItems } from "@/lib/dashboard-data";
+import { todayInZone } from "@/lib/dates";
+import { buildDigest } from "@/lib/digest/build";
+import { renderHtml, renderText } from "@/lib/digest/render";
+import { sendMail } from "@/lib/digest/resend";
 
 const PATH = "/configuracoes";
 
@@ -80,4 +86,49 @@ export async function saveDigestSettings(formData: FormData) {
 
   revalidatePath(PATH);
   flash(PATH, "ok", enabled ? "Resumo diário ligado." : "Resumo diário desligado.");
+}
+
+/** Envia agora um e-mail de teste (marcado [TESTE]) para o destinatário configurado. Não registra o dia. */
+export async function sendTestDigest() {
+  const { supabase } = await requireUser();
+
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.DIGEST_FROM_EMAIL?.trim();
+  if (!apiKey || !from)
+    flash(PATH, "erro", "Faltam RESEND_API_KEY ou DIGEST_FROM_EMAIL na Vercel (e um redeploy depois de salvar).");
+
+  const { data: settings } = await supabase
+    .from("notification_settings")
+    .select("recipient_email")
+    .maybeSingle();
+  const to = settings?.recipient_email?.trim() || process.env.DIGEST_TO_EMAIL?.trim();
+  if (!to) flash(PATH, "erro", "Defina o destinatário aqui ou DIGEST_TO_EMAIL na Vercel.");
+
+  const today = todayInZone();
+  const [{ data: entities }, pay, rec] = await Promise.all([
+    supabase.from("entities").select("id, name"),
+    loadDueItems(supabase, "payable", EMPTY_FILTERS, null, today),
+    loadDueItems(supabase, "receivable", EMPTY_FILTERS, null, today),
+  ]);
+  if (pay.failed || rec.failed) flash(PATH, "erro", "Não foi possível carregar os lançamentos para o teste.");
+
+  const digest = buildDigest({
+    today,
+    payables: pay.items,
+    receivables: rec.items,
+    entityNames: Object.fromEntries((entities ?? []).map((e) => [e.id as string, e.name as string])),
+    truncated: pay.truncated || rec.truncated,
+  });
+
+  const mail = await sendMail({
+    apiKey: apiKey!,
+    from: from!,
+    to: to!,
+    subject: `[TESTE] ${digest.subject}`,
+    html: renderHtml(digest),
+    text: renderText(digest),
+  });
+  if (!mail.ok) flash(PATH, "erro", `Não enviou: ${mail.error}`);
+
+  flash(PATH, "ok", `E-mail de teste enviado para ${to}. Confira a caixa de entrada e o spam.`);
 }
