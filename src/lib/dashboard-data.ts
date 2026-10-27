@@ -47,6 +47,7 @@ export async function loadDueItems(
   filters: Filters,
   entityIds: string[] | null,
   today: string,
+  ownerId?: string, // só para o cliente de servidor (service_role), que ignora a RLS
 ): Promise<LoadResult> {
   if (entityIds && entityIds.length === 0) return EMPTY;
 
@@ -65,6 +66,7 @@ export async function loadDueItems(
 
   if (entityIds) q = q.in("entity_id", entityIds);
   if (filters.currency) q = q.eq("currency", filters.currency);
+  if (ownerId) q = q.eq("owner_id", ownerId);
 
   const { data, error } = await q;
   if (error || !data) return { items: [], failed: true, truncated: false };

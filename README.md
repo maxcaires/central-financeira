@@ -23,10 +23,10 @@ BRL e USD ficam sempre separados, sem conversão automática.
 | 4 | Painel e filtros | **Concluída** (conferir no ambiente real) |
 | 5 | Cobranças | **Concluída** (conferir no ambiente real) |
 | 6 | Resumo diário em modo teste (sem envio) | **Concluída** (conferir no ambiente real) |
-| 7 | Envio real e agendamento | Pendente (requer autorização) |
+| 7 | Envio real e agendamento | **Código pronto**; falta configurar Resend/Vercel/agendamento (abaixo) |
 | 8 | Publicação | Pendente |
 
-**Nenhum serviço externo está configurado e nenhum e-mail é enviado.**
+O resumo só é enviado depois de você ligar em Configurações **e** configurar os passos da Etapa 7.
 
 ## Configurar o Supabase (passo a passo)
 
@@ -56,6 +56,26 @@ a pagar e um valor a receber.
 
 > Não rode `supabase/seed.sql` no projeto real: ele cria dados fictícios que não têm botão de exclusão
 > (só de cancelamento). Teste com 1 ou 2 lançamentos seus ou use um segundo projeto Supabase só para testes.
+
+## Etapa 7: ativar o resumo diário
+
+Variáveis na **Vercel** (Settings → Environment Variables; marque Production). Cole cada valor só ali, nunca em
+conversa, commit ou print. Nenhuma pode começar com `NEXT_PUBLIC_`.
+
+| Variável | Valor |
+|---|---|
+| `RESEND_API_KEY` | chave criada no Resend |
+| `DIGEST_FROM_EMAIL` | remetente, ex.: `Central Financeira <onboarding@resend.dev>` |
+| `DIGEST_TO_EMAIL` | seu e-mail (o mesmo da conta Resend, se usar `onboarding@resend.dev`) |
+| `SUPABASE_SERVICE_ROLE_KEY` | chave *secret/service_role* do Supabase (só a rota do resumo usa) |
+| `CRON_SECRET` | texto aleatório longo (32+ caracteres) |
+
+Depois: redeploy, **Configurações → Enviar o resumo diário** (ligar e salvar), teste manual
+(`POST /api/cron/daily-digest?teste=1` com `Authorization: Bearer <CRON_SECRET>`; manda e-mail marcado `[TESTE]`
+sem gastar o envio do dia) e, por fim, `supabase/schedule_daily_digest.sql` no SQL Editor.
+
+A rota recusa chamadas sem o segredo, grava um registro por dia em `digest_runs` (nunca envia duas vezes no mesmo
+dia; se a tentativa falhar, a próxima chamada tenta de novo) e não envia se não conseguir carregar os lançamentos.
 
 ## O que a Etapa 6 entrega (resumo diário em modo teste)
 

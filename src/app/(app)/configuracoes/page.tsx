@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Flash } from "@/components/flash";
 import { requireUser } from "@/lib/auth";
 import { ui } from "@/lib/ui";
-import { createEntity, renameEntity, setEntityActive } from "./actions";
+import { createEntity, renameEntity, saveDigestSettings, setEntityActive } from "./actions";
 
 const KIND_LABEL = { company: "Empresa", personal: "Pessoal" } as const;
 const COUNTRY_LABEL = { BR: "Brasil", US: "EUA" } as const;
@@ -17,6 +17,11 @@ export default async function ConfiguracoesPage(props: PageProps<"/configuracoes
     .order("active", { ascending: false })
     .order("country")
     .order("name");
+
+  const { data: digest } = await supabase
+    .from("notification_settings")
+    .select("enabled, include_empty, recipient_email")
+    .maybeSingle();
 
   return (
     <div className="flex flex-col gap-6">
@@ -117,11 +122,43 @@ export default async function ConfiguracoesPage(props: PageProps<"/configuracoes
       <section className={ui.card}>
         <h2 className="font-medium">Resumo diário por e-mail</h2>
         <p className={`${ui.muted} mt-1`}>
-          O envio real está planejado para a Etapa 7. Nenhum e-mail é enviado e nada precisa ser configurado agora.
+          Um e-mail por dia, às 08:00 (Brasília), com vencidos, vencem hoje e próximos 7 dias. O envio só
+          funciona depois de configurar o Resend e o agendamento (veja o README).
         </p>
-        <Link href="/configuracoes/resumo" className={`${ui.btn} mt-3 inline-block`}>
-          Pré-visualizar o resumo de hoje
-        </Link>
+        <form action={saveDigestSettings} className="mt-4 flex flex-col gap-4">
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="enabled" defaultChecked={digest?.enabled ?? false} className="h-4 w-4" />
+            Enviar o resumo diário
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="include_empty"
+              defaultChecked={digest?.include_empty ?? true}
+              className="h-4 w-4"
+            />
+            Enviar mesmo quando não houver nada pendente
+          </label>
+          <label className={ui.label}>
+            Enviar para (opcional)
+            <input
+              name="recipient_email"
+              type="email"
+              maxLength={200}
+              defaultValue={digest?.recipient_email ?? ""}
+              placeholder="Em branco usa o e-mail definido no servidor"
+              className={`${ui.input} max-w-md`}
+            />
+          </label>
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="submit" className={ui.btn}>
+              Salvar
+            </button>
+            <Link href="/configuracoes/resumo" className={ui.btnSecondary}>
+              Pré-visualizar o resumo de hoje
+            </Link>
+          </div>
+        </form>
       </section>
     </div>
   );

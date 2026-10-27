@@ -55,3 +55,29 @@ export async function setEntityActive(formData: FormData) {
   revalidatePath(PATH);
   flash(PATH, "ok", active ? "Entidade reativada." : "Entidade desativada.");
 }
+
+export async function saveDigestSettings(formData: FormData) {
+  const { supabase, user } = await requireUser();
+
+  const enabled = formData.get("enabled") === "on";
+  const includeEmpty = formData.get("include_empty") === "on";
+  const recipient = String(formData.get("recipient_email") ?? "").trim();
+
+  if (recipient && (recipient.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient)))
+    flash(PATH, "erro", "E-mail do destinatário inválido.");
+
+  const { error } = await supabase.from("notification_settings").upsert(
+    {
+      owner_id: user.id,
+      enabled,
+      include_empty: includeEmpty,
+      recipient_email: recipient || null,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "owner_id" },
+  );
+  if (error) flash(PATH, "erro", "Não foi possível salvar o resumo diário.");
+
+  revalidatePath(PATH);
+  flash(PATH, "ok", enabled ? "Resumo diário ligado." : "Resumo diário desligado.");
+}
